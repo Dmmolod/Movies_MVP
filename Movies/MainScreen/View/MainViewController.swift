@@ -16,7 +16,6 @@ final class MainViewController: UIViewController {
     let filmsTable = UITableView()
     let categoryView = CategoryView()
 
-
     init(with presenter: MainViewPresenter) {
         self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
@@ -67,7 +66,6 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                                                        for: indexPath) as? FilmTableCell else { return UITableViewCell() }
         
         let filmForCell = presenter.films[indexPath.row]
-        
         filmCell.config(posterPath: filmForCell.poster_path,
                         title: filmForCell.title,
                         overview: "   " + filmForCell.overview,
@@ -99,7 +97,6 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
             frame: scrollView.frame,
             contentSize: scrollView.contentSize)
     }
-    
 }
 
 extension MainViewController: CategoryViewDelegate {

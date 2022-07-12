@@ -52,7 +52,6 @@ final class DetailImagesTableViewCell: UITableViewCell {
                                               width: contentView.bounds.width,
                                               height: scrollView.contentSize.height)
             }
-            
         }
     }
     

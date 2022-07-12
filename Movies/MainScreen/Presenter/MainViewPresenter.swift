@@ -50,9 +50,7 @@ final class MainViewPresenter {
               currentFilmsResponse.page < currentFilmsResponse.total_pages  else { return }
         
         isPaging = false
-        getFilms(page: currentFilmsResponse.page + 1, completion: {
-            self.isPaging = true
-        })
+        getFilms(page: currentFilmsResponse.page + 1) { self.isPaging = true }
     }
     
     func didSelectFilm(cell index: Int) {
@@ -67,7 +65,6 @@ final class MainViewPresenter {
         getFilms(page: nil)
         delegate?.mainViewPresenterDidSelectCategory()
     }
-    
     
     private func getFilms(page: Int?, completion: (() -> Void)? = nil) {
         

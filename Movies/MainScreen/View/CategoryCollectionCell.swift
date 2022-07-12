@@ -36,7 +36,6 @@ final class CategoryCollectionCell: UICollectionViewCell {
                              bottom: bottomAnchor,
                              leading: leadingAnchor,
                              trailing: trailingAnchor)
-
     }
     
     required init?(coder: NSCoder) { nil }
@@ -44,6 +43,4 @@ final class CategoryCollectionCell: UICollectionViewCell {
     func config(text: String) {
         categoryTitle.text = text
     }
-    
-    
 }

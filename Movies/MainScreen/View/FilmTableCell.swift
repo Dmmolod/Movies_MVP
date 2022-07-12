@@ -30,7 +30,6 @@ final class FilmTableCell: UITableViewCell {
     
     required init?(coder: NSCoder) { nil }
     
-    
     func config(posterPath: String,
                 title: String,
                 overview: String,
@@ -105,5 +104,4 @@ final class FilmTableCell: UITableViewCell {
                              paddingTop: 5,
                              paddingBottom: 5)
     }
-    
 }

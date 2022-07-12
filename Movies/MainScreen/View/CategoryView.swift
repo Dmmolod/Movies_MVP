@@ -11,15 +11,12 @@ import UIKit
 protocol CategoryViewDelegate: AnyObject {
     func setupCollectionViewDelegate() -> UICollectionViewDelegate
     func setupCollectionViewDataSource() -> UICollectionViewDataSource
-
 }
 
 final class CategoryView: UIView {
     
     weak var delegate: CategoryViewDelegate? {
-        didSet {
-            setupDelegate()
-        }
+        didSet { setupDelegate() }
     }
     
     private var categoryCollectionView: UICollectionView = {

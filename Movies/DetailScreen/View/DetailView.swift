@@ -16,9 +16,7 @@ protocol DetailTableViewDelegate: AnyObject {
 final class DetailView: UIView {
     
     weak var delegate: DetailTableViewDelegate? {
-        didSet {
-            setupDelegate()
-        }
+        didSet { setupDelegate() }
     }
     
     private let detailTableView = UITableView()
