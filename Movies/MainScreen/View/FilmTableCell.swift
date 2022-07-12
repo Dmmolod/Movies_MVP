@@ -46,11 +46,11 @@ final class FilmTableCell: UITableViewCell {
     
     private func loadPoster() {
         if let posterPath = posterPath {
-            NetworkManager().getImage(by: posterPath) { result in
+            NetworkManager().getImage(by: posterPath) { [weak self] result in
                 switch result {
                 case .success(let poster):
-                    if posterPath == self.posterPath {
-                        self.poster.image = poster
+                    if posterPath == self?.posterPath {
+                        self?.poster.image = poster
                     }
                 case .failure(let error): print("\(String(describing: self)): \(error.localizedDescription)")
                 }

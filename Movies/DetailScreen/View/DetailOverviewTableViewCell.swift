@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class DetailOverviewTableViewCell: UITableViewCell {
+final class DetailOverviewTableViewCell: UITableViewCell {
     
     private var overviewLable: UILabel = {
        let lab = UILabel()

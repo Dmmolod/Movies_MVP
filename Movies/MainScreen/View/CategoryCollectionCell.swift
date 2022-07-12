@@ -7,8 +7,8 @@
 
 import Foundation
 import UIKit
-
-class CategoryCollectionCell: UICollectionViewCell {
+ 
+final class CategoryCollectionCell: UICollectionViewCell {
     
     var categoryTitle: UILabel = {
         let categoryTitle = UILabel()

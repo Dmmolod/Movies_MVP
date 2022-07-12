@@ -13,7 +13,7 @@ protocol DetailTableViewDelegate: AnyObject {
     func detailTableViewDelegate() -> UITableViewDelegate
 }
 
-class DetailView: UIView {
+final class DetailView: UIView {
     
     weak var delegate: DetailTableViewDelegate? {
         didSet {

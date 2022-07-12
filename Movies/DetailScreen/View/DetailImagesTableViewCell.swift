@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class DetailImagesTableViewCell: UITableViewCell {
+final class DetailImagesTableViewCell: UITableViewCell {
     
     private let scrollView: UIScrollView = {
        let scrollView = UIScrollView()
@@ -24,8 +24,6 @@ class DetailImagesTableViewCell: UITableViewCell {
     }
     
     required init?(coder: NSCoder) { nil }
-    
-    
     
     func config(with images: [UIImage?]) {
         if images.isEmpty { return }

@@ -7,19 +7,6 @@
 
 import Foundation
 
-enum FilmCategory: String, CaseIterable {
-    case topRated = "top_rated", popular = "popular", nowPlaying = "now_playing", upcoming
-    
-    var nameForView: String {
-        switch self {
-        case .topRated: return "Топ"
-        case .popular: return "Популярное"
-        case .nowPlaying: return "Сейчас в кино"
-        case .upcoming: return "Скоро в кино"
-        }
-    }
-}
-
 struct FilmsResponse: Decodable {
     let page: Int
     let results: [Film]
@@ -27,9 +14,13 @@ struct FilmsResponse: Decodable {
 }
 
 struct Film: Decodable {
+    
+    private let release_date: String
+    var releaseDate: String? {
+        return DateFormatter().stringDate(from: release_date, currentFormat: "YY-MM-dd", to: "dd.MM.YYYY")
+    }
     let id: Int
     let title, overview: String
     let vote_average: Double
     let poster_path: String
-    let release_date: String
 }

@@ -12,7 +12,7 @@ final class NetworkManager {
     
     private let baseUrl = "https://api.themoviedb.org/3/movie/", key = "api_key=6b17d488280ac0859560482490d1f60d", language = "language=ru"
     private let baseImageUrl = "https://image.tmdb.org/t/p/original"
-    
+        
     func getFilms(page: Int?, category: FilmCategory, _ completion: @escaping (Result<FilmsResponse, Error>) -> Void) {
         
         guard let url = URL(string: baseUrl + category.rawValue + "?" + key + "&" + language + (page != nil ? "&page=\(page!)" : "")) else { return }

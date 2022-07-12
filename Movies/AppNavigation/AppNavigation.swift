@@ -11,17 +11,22 @@ import UIKit
 final class AppNavigation: UINavigationController {
     
     init() {
-        let mainVC = MainViewController()
+        let presenter = MainViewPresenter()
+        let mainVC = MainViewController(with: presenter)
         super.init(rootViewController: mainVC)
         
         navigationBar.prefersLargeTitles = true
+        mainVC.title = "Movies"
         mainVC.appNavigation = self
     }
     
     required init?(coder aDecoder: NSCoder) { nil }
-    
+        
     func goToDetailView(with film: Film) {
-        let detailViewController = DetailViewController(film: film)
+        let presenter = DetailViewPresenter(with: film)
+        let detailViewController = DetailViewController(with: presenter)
+        detailViewController.title = film.title
+        
         pushViewController(detailViewController, animated: true)
     }
     

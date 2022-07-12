@@ -11,33 +11,37 @@ import UIKit
 final class MainViewController: UIViewController {
     
     weak var appNavigation: AppNavigation?
+    private let presenter: MainViewPresenter
     
     let filmsTable = UITableView()
-    let networkManager = NetworkManager()
     let categoryView = CategoryView()
 
-    var currentCategory: FilmCategory = .topRated
-    var films = [Film]()
-    var currentFilmsResponse: FilmsResponse?
-    var isPaging = true
 
+    init(with presenter: MainViewPresenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
+        
+        self.presenter.delegate = self
+        categoryView.delegate = self
+    }
+    
+    required init?(coder: NSCoder) { return nil }
+    
+    deinit { print("\(String(describing: self)): Deinit") }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        title = "Movies"
                
-        categoryView.delegate = self
-        categoryView.selectItem(i: FilmCategory.allCases.firstIndex(of: currentCategory))
+        categoryView.selectItem(i: presenter.currentCategoryIndex)
 
         setupUI()
         setupFilmTable()
-        getFilms(page: nil)
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         view.addSubview(filmsTable)
+        
         filmsTable.anchor(top: view.topAnchor,
                           bottom: view.bottomAnchor,
                           leading: view.leadingAnchor,
@@ -49,43 +53,26 @@ final class MainViewController: UIViewController {
         filmsTable.dataSource = self
         filmsTable.register(FilmTableCell.self, forCellReuseIdentifier: FilmTableCell.identifier)
     }
-    
-    private func getFilms(page: Int?, completion: (() -> Void)? = nil) {
-        networkManager.getFilms(page: page, category: currentCategory) { [weak self] result in
-            switch result {
-            case .success(let filmsResponse):
-                self?.currentFilmsResponse = filmsResponse
-                self?.films.append(contentsOf: filmsResponse.results)
-                self?.filmsTable.reloadData()
-                completion?()
-                
-                case .failure(let error): print(self?.currentCategory.nameForView ?? "", " for page - \(page ?? 1): ",error.localizedDescription, separator: "")
-            }
-        }
-    }
 }
 
 extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return films.count
+        return presenter.films.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard films.count > indexPath.row,
+        guard presenter.films.count > indexPath.row,
               let filmCell = tableView.dequeueReusableCell(withIdentifier: FilmTableCell.identifier,
                                                        for: indexPath) as? FilmTableCell else { return UITableViewCell() }
         
-        let filmForCell = films[indexPath.row]
-        let releaseDate = DateFormatter().stringDate(from: filmForCell.release_date,
-                                                     currentFormat: "YY-MM-dd",
-                                                     to: "dd.MM.YYYY")
+        let filmForCell = presenter.films[indexPath.row]
         
         filmCell.config(posterPath: filmForCell.poster_path,
                         title: filmForCell.title,
                         overview: "   " + filmForCell.overview,
                         voteAverage: String(filmForCell.vote_average),
-                        releaseDate: releaseDate)
+                        releaseDate: filmForCell.releaseDate)
         
         return filmCell
     }
@@ -103,20 +90,14 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard films.count > indexPath.row  else { return }
-        let film = films[indexPath.row]
-        appNavigation?.goToDetailView(with: film)
+        presenter.didSelectFilm(cell: indexPath.row)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard (scrollView.contentOffset.y + scrollView.frame.size.height) > scrollView.contentSize.height && isPaging,
-              let currentFilmsResponse = currentFilmsResponse,
-              currentFilmsResponse.page < currentFilmsResponse.total_pages  else { return }
-        
-        isPaging = false
-        getFilms(page: currentFilmsResponse.page + 1, completion: {
-            self.isPaging = true
-        })
+        presenter.filmTableDidScroll(
+            contentOffset: scrollView.contentOffset,
+            frame: scrollView.frame,
+            contentSize: scrollView.contentSize)
     }
     
 }
@@ -141,24 +122,33 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         guard let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionCell.identifier,
                                                       for: indexPath) as? CategoryCollectionCell else { return UICollectionViewCell() }
         
-        let filmCategory = FilmCategory.allCases[indexPath.item]
-        categoryCell.config(text: filmCategory.nameForView)
+        let category = presenter.category(to: indexPath.item)
+        categoryCell.config(text: category.nameForView)
         
         return categoryCell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        films.removeAll()
         collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-        
-        let firstFilmCellIndexPath = IndexPath(row: 0, section: 0)
-        
-        if !filmsTable.visibleCells.isEmpty {
-            filmsTable.scrollToRow(at: firstFilmCellIndexPath, at: .top, animated: true)
-        }
-        
-        currentCategory = FilmCategory.allCases[indexPath.item]
-        getFilms(page: nil)
+        presenter.didSelectCategory(cell: indexPath.item)
+    }
+}
+
+extension MainViewController: MainViewPresenterDelegate {
+    
+    func mainViewPresenterModelUpdate() {
+        filmsTable.reloadData()
     }
     
+    func mainViewPresenterDidSelect(film: Film) {
+        appNavigation?.goToDetailView(with: film)
+    }
+    
+    func mainViewPresenterDidSelectCategory() {
+        let firstFilmTableCellIndexPath = IndexPath(row: 0, section: 0)
+        
+        if !filmsTable.visibleCells.isEmpty {
+            filmsTable.scrollToRow(at: firstFilmTableCellIndexPath, at: .top, animated: true)
+        }
+    }
 }
