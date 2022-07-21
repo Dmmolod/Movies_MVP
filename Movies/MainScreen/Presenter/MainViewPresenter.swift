@@ -31,9 +31,7 @@ final class MainViewPresenter {
     init() {
         getFilms(page: nil)
     }
-    
-    deinit { print("\(String(describing: self)): Deinit") }
-    
+        
     func category(to index: Int) -> FilmCategory {
         guard FilmCategory.allCases.count > index else { return currentCategory }
         return FilmCategory.allCases[index]
@@ -47,7 +45,7 @@ final class MainViewPresenter {
         
         guard scrollHeight > contentSize.height && isPaging,
               let currentFilmsResponse = currentFilmsResponse,
-              currentFilmsResponse.page < currentFilmsResponse.total_pages  else { return }
+              currentFilmsResponse.page < currentFilmsResponse.totalPages  else { return }
         
         isPaging = false
         getFilms(page: currentFilmsResponse.page + 1) { self.isPaging = true }

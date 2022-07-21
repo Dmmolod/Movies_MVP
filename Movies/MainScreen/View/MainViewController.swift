@@ -25,9 +25,7 @@ final class MainViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) { return nil }
-    
-    deinit { print("\(String(describing: self)): Deinit") }
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
                
@@ -66,10 +64,10 @@ extension MainViewController: UITableViewDataSource, UITableViewDelegate {
                                                        for: indexPath) as? FilmTableCell else { return UITableViewCell() }
         
         let filmForCell = presenter.films[indexPath.row]
-        filmCell.config(posterPath: filmForCell.poster_path,
+        filmCell.config(posterPath: filmForCell.posterPath,
                         title: filmForCell.title,
                         overview: "   " + filmForCell.overview,
-                        voteAverage: String(filmForCell.vote_average),
+                        voteAverage: String(filmForCell.voteAverage),
                         releaseDate: filmForCell.releaseDate)
         
         return filmCell
